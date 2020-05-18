@@ -2,7 +2,9 @@
 
 WIP - Currently, only the csvtodb.py is working to create the sqlite db
 
-This app will provide a simple IU for finding a recipe based on different filters like ingredients, categories, etc.
+This app will provide a simple UI for finding a recipe based on different filters like ingredients, categories, etc.
+
+It will also serve as my initial foray into working with databases and web frameworks, so here's to learning!
 
 
 ## Usage
