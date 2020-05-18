@@ -19,7 +19,7 @@ Then, bootstrap the database:
 
 That's about it for now.  You can use some basic queries via shell:
 
-`sqlite3 test.db 'SELECT * FROM ingredients'
+`sqlite3 test.db 'SELECT * FROM ingredients'`
 
 To start seeing the database entries and relationships, load up python:
 
