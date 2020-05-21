@@ -9,30 +9,29 @@
 
 import sys
 import csv
-from database import session_scope
 from database import init_db
+from database import session_scope
 from models import Ingredient, Recipe
-
-RECIPE_NAME = 1
-RECIPE_CATEGORY = 1
-INGREDIENT_NAME = 2
-INGREDIENT_CATEGORY = 4
-PAGE_NUM = 5
-DIRECTIONS = 6
-NOTES = 7
 
 
 def parse_csv_recipes(csv_filename: str) -> list:
+    RECIPE_NAME = 1
+    INGREDIENT_NAME = 2
+    INGREDIENT_CATEGORY = 4
+    PAGE_NUM = 5
+    DIRECTIONS = 6
+    NOTES = 7
+
+    recipe_category, recipe_name = None, None
+
     with open(csv_filename) as f:
-        csvr = csv.reader(f)
-        recipe_category, recipe_name = None, None
-        for line in csvr:
+        for line in csv.reader(f):
             if (line[RECIPE_NAME], line[DIRECTIONS], line[NOTES]) == ("", "", ""):
                 # If all expected columns are blank, skip line
                 continue
-            if line[RECIPE_CATEGORY] != "" and line[INGREDIENT_NAME] == "":
-                # If all columns but the first are blank, it's a new category
-                recipe_category = line[RECIPE_CATEGORY]
+            if line[RECIPE_NAME] != "" and line[INGREDIENT_NAME] == "":
+                # If there's a name and no ingredient, it's a new category
+                recipe_category = line[RECIPE_NAME]
                 continue
 
             if line[RECIPE_NAME] != "":
@@ -50,16 +49,17 @@ def parse_csv_recipes(csv_filename: str) -> list:
                             recipe_notes,
                         )
                         yield recipe
-                    # Create or clear recipe variables
+                    # Create/Reset recipe variables
                     recipe_name = line[RECIPE_NAME]
-                    recipe_ingredients = set()
+                    recipe_ingredients = list()
                     recipe_page_num = None
                     recipe_directions, recipe_notes, recipe_garnish = "", "", ""
 
             if line[INGREDIENT_NAME] != "":
-                recipe_ingredients.add(
-                    (line[INGREDIENT_NAME], line[INGREDIENT_CATEGORY])
-                )
+                new_ingredient = (line[INGREDIENT_NAME], line[INGREDIENT_CATEGORY])
+                if new_ingredient not in recipe_ingredients:
+                    # Add ingredient if it's not already in the ingredient list
+                    recipe_ingredients.append(new_ingredient)
 
             if recipe_page_num is None:
                 # Set page number
@@ -73,7 +73,7 @@ def parse_csv_recipes(csv_filename: str) -> list:
                     line_directions = line_directions.replace(",", "")
                     recipe_garnish = line_directions.strip()
                 elif line_directions.isupper():
-                    # Append to garnish
+                    # Garnish continues, append
                     recipe_garnish += " " + line_directions
                 else:
                     # Set or append to directions
@@ -87,6 +87,7 @@ def parse_csv_recipes(csv_filename: str) -> list:
             if line[NOTES] != "":
                 if recipe_notes != "":
                     if recipe_notes.isupper():
+                        # Add newline after AUTHOR YEAR note header
                         recipe_notes += "\n"
                     else:
                         recipe_notes += " "
@@ -116,9 +117,7 @@ def populate_db_recipes(recipe_list: iter) -> None:
         for item in recipe_list:
             ingredient_list = []
             for ingredient_name, ingredient_category in item[INGREDIENTS]:
-                ingredient = (
-                    session.query(Ingredient).filter_by(name=ingredient_name).first()
-                )
+                ingredient = Ingredient.query.filter_by(name=ingredient_name).first()
                 if ingredient is None:
                     ingredient = Ingredient(
                         name=ingredient_name, category=ingredient_category

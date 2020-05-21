@@ -1,36 +1,30 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import Model
 from contextlib import contextmanager
-from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 
 db_filename = "deathco.db"
 
-engine = create_engine(f"sqlite:///{db_filename}", echo=True)
-Session = sessionmaker(bind=engine)
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_filename}"
+
+db = SQLAlchemy(app)
 
 
 @contextmanager
 def session_scope():
-    session = Session()
+    session = db.session()
     try:
         yield session
         session.commit()
     except:
-        session.rollback
+        session.rollback()
         raise
     finally:
         session.close()
 
 
-class Base(object):
-    id = Column(Integer, primary_key=True)
-
-
-Base = declarative_base(cls=Base)
-
-
 def init_db():
     import models
 
-    Base.metadata.create_all(bind=engine)
+    db.create_all()

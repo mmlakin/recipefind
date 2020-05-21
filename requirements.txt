@@ -1,1 +1,2 @@
-SQLAlchemy
+wheel
+Flask-SQLAlchemy
