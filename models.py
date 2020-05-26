@@ -1,4 +1,5 @@
 # models.py
+
 from app import db
 
 ingredient_recipe = db.Table(
@@ -12,9 +13,6 @@ class Ingredient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     category = db.Column(db.String)
-    # recipes = db.relationship(
-    #     "Recipe", secondary="ingredient_recipe", backref="ingredients"
-    # )
 
     def __repr__(self):
         return f"Ingredient(name='{self.name}', category='{self.category}')"

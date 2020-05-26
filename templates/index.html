@@ -8,22 +8,19 @@
 {% from "_formhelpers.html" import render_field %}
 <form method=post>
   <dl>
-    {{ render_field(form.select1) }}
-    <p>
-    {{ render_field(form.search1) }}
-    <br>
-    {{ render_field(form.select2) }}
-    <p>
-    {{ render_field(form.search2) }}
-    <br>
-    {{ render_field(form.select3) }}
-    <p>
-    {{ render_field(form.search3) }}
-    <br>
-    {{ render_field(form.select4) }}
-    <p>
-    {{ render_field(form.search4) }}
-    <br>
+    {% for field in form %}
+      <tr>
+        {% if field.type != "BooleanField" %}
+          <td>{{ field.label }}</td>
+          <td>{{ field }}</td>
+        {% else %}
+          <td></td>
+          <td>{{ field }} {{ field.label }}</td>
+          <br>
+        {% endif %}
+      </tr>
+    {% endfor %}
+
   </dl>
   <p><input type=submit value=Search>
 </form>
@@ -51,18 +48,5 @@
     {{ recipe.directions }}
   <p style="margin-left: 40px">
     {{ recipe.notes }}
-
-
-        <!-- return ( -->
-        <!--     f"{self.name} ({self.category}, page {self.page_num})" -->
-        <!--     + "\n\n" -->
-        <!--     + "\n".join( -->
-        <!--         " ".join(word.capitalize() for word in ingredient.name.split()) -->
-        <!--         for ingredient in self.ingredients -->
-        <!--     ) -->
-        <!--     + "\n\n" -->
-        <!--     + f"{self.directions}\n" -->
-        <!--     + f"\n{self.notes}" -->
-        <!-- ) -->
   {% endfor %}
 {% endif %}

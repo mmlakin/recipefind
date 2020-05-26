@@ -7,7 +7,7 @@ It will also serve as my initial foray into working with databases and web frame
 
 This is a work in progress.
 
-The Flask app works!  However, there are only four filters, with four categories, and no way to exclude items yet.
+Currently there are 8 manual filters and an exclude option.
 
 ## Usage
 
@@ -26,6 +26,6 @@ Then, bootstrap the database:
 
 Finally, start the Flask app:
 
-`python3 recipefind.py`
+`flask run`
 
-Navigate to the website and choose the filters you want, and click Search to display the matching recipes.
+Navigate to the website, choose the filters you want, and click Search to display the matching recipes.  Continue adding filters to reduce the number of matching recipes displayed.
