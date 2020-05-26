@@ -1,0 +1,68 @@
+<doctype html>
+<head>
+    <title>RecipeFind</title>
+</head>
+
+<h2>RecipeFind Database</h2>
+
+{% from "_formhelpers.html" import render_field %}
+<form method=post>
+  <dl>
+    {{ render_field(form.select1) }}
+    <p>
+    {{ render_field(form.search1) }}
+    <br>
+    {{ render_field(form.select2) }}
+    <p>
+    {{ render_field(form.search2) }}
+    <br>
+    {{ render_field(form.select3) }}
+    <p>
+    {{ render_field(form.search3) }}
+    <br>
+    {{ render_field(form.select4) }}
+    <p>
+    {{ render_field(form.search4) }}
+    <br>
+  </dl>
+  <p><input type=submit value=Search>
+</form>
+
+<p>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% if recipes %}
+  {% for recipe in recipes %}
+  <h3>{{ recipe.name }} ({{ recipe.category }}, page {{ recipe.page_num}})</h3>
+  <ul>
+  {% for ingredient in recipe.ingredients %}
+    <li>{{ ingredient.name }}</li>
+  {% endfor %}
+  </ul>
+  <p style="margin-left: 40px">
+    {{ recipe.directions }}
+  <p style="margin-left: 40px">
+    {{ recipe.notes }}
+
+
+        <!-- return ( -->
+        <!--     f"{self.name} ({self.category}, page {self.page_num})" -->
+        <!--     + "\n\n" -->
+        <!--     + "\n".join( -->
+        <!--         " ".join(word.capitalize() for word in ingredient.name.split()) -->
+        <!--         for ingredient in self.ingredients -->
+        <!--     ) -->
+        <!--     + "\n\n" -->
+        <!--     + f"{self.directions}\n" -->
+        <!--     + f"\n{self.notes}" -->
+        <!-- ) -->
+  {% endfor %}
+{% endif %}

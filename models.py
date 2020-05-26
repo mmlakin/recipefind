@@ -1,4 +1,5 @@
-from database import db
+# models.py
+from app import db
 
 ingredient_recipe = db.Table(
     "ingredient_recipe",
@@ -35,10 +36,7 @@ class Recipe(db.Model):
         return (
             f"{self.name} ({self.category}, page {self.page_num})"
             + "\n\n"
-            + "\n".join(
-                " ".join(word.capitalize() for word in ingredient.name.split())
-                for ingredient in self.ingredients
-            )
+            + "\n".join(ingredient.name for ingredient in self.ingredients)
             + "\n\n"
             + f"{self.directions}\n"
             + f"\n{self.notes}"

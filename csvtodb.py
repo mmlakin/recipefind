@@ -9,8 +9,8 @@
 
 import sys
 import csv
-from database import init_db
-from database import session_scope
+from app import init_db
+from app import db_session_scope
 from models import Ingredient, Recipe
 
 
@@ -31,11 +31,11 @@ def parse_csv_recipes(csv_filename: str) -> list:
                 continue
             if line[RECIPE_NAME] != "" and line[INGREDIENT_NAME] == "":
                 # If there's a name and no ingredient, it's a new category
-                recipe_category = line[RECIPE_NAME]
+                recipe_category = line[RECIPE_NAME].title()
                 continue
 
             if line[RECIPE_NAME] != "":
-                if line[RECIPE_NAME] != recipe_name:
+                if line[RECIPE_NAME].title() != recipe_name:
                     # Create new recipe
                     if recipe_name is not None:
                         # Yield existing recipe first
@@ -50,13 +50,16 @@ def parse_csv_recipes(csv_filename: str) -> list:
                         )
                         yield recipe
                     # Create/Reset recipe variables
-                    recipe_name = line[RECIPE_NAME]
+                    recipe_name = line[RECIPE_NAME].title()
                     recipe_ingredients = list()
                     recipe_page_num = None
                     recipe_directions, recipe_notes, recipe_garnish = "", "", ""
 
             if line[INGREDIENT_NAME] != "":
-                new_ingredient = (line[INGREDIENT_NAME], line[INGREDIENT_CATEGORY])
+                new_ingredient = (
+                    line[INGREDIENT_NAME].title(),
+                    line[INGREDIENT_CATEGORY].title(),
+                )
                 if new_ingredient not in recipe_ingredients:
                     # Add ingredient if it's not already in the ingredient list
                     recipe_ingredients.append(new_ingredient)
@@ -113,7 +116,7 @@ def populate_db_recipes(recipe_list: iter) -> None:
     GARNISH = 4
     DIRECTIONS = 5
     NOTES = 6
-    with session_scope() as session:
+    with db_session_scope() as session:
         for item in recipe_list:
             ingredient_list = []
             for ingredient_name, ingredient_category in item[INGREDIENTS]:
