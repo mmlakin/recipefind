@@ -26,8 +26,8 @@ def parse_csv_recipes(csv_filename: str) -> list:
         newline = str.title(line)
         newline = newline.replace("’S", "’s")
         newline = newline.replace("’T", "’t")
-        newline = newline.replace("’T", "’t")
         newline = newline.replace("‘N", "‘n")
+        newline = newline.replace("Th ", "th ")
         return newline
 
     recipe_category, recipe_name = None, None
