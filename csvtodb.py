@@ -22,6 +22,14 @@ def parse_csv_recipes(csv_filename: str) -> list:
     DIRECTIONS = 6
     NOTES = 7
 
+    def title_and_fix(line):
+        newline = str.title(line)
+        newline = newline.replace("’S", "’s")
+        newline = newline.replace("’T", "’t")
+        newline = newline.replace("’T", "’t")
+        newline = newline.replace("‘N", "‘n")
+        return newline
+
     recipe_category, recipe_name = None, None
 
     with open(csv_filename) as f:
@@ -31,11 +39,11 @@ def parse_csv_recipes(csv_filename: str) -> list:
                 continue
             if line[RECIPE_NAME] != "" and line[INGREDIENT_NAME] == "":
                 # If there's a name and no ingredient, it's a new category
-                recipe_category = line[RECIPE_NAME].title()
+                recipe_category = title_and_fix(line[RECIPE_NAME])
                 continue
 
             if line[RECIPE_NAME] != "":
-                if line[RECIPE_NAME].title() != recipe_name:
+                if title_and_fix(line[RECIPE_NAME]) != recipe_name:
                     # Create new recipe
                     if recipe_name is not None:
                         # Yield existing recipe first
@@ -50,15 +58,15 @@ def parse_csv_recipes(csv_filename: str) -> list:
                         )
                         yield recipe
                     # Create/Reset recipe variables
-                    recipe_name = line[RECIPE_NAME].title()
+                    recipe_name = title_and_fix(line[RECIPE_NAME])
                     recipe_ingredients = list()
                     recipe_page_num = None
                     recipe_directions, recipe_notes, recipe_garnish = "", "", ""
 
             if line[INGREDIENT_NAME] != "":
                 new_ingredient = (
-                    line[INGREDIENT_NAME].title(),
-                    line[INGREDIENT_CATEGORY].title(),
+                    title_and_fix(line[INGREDIENT_NAME]),
+                    title_and_fix(line[INGREDIENT_CATEGORY]),
                 )
                 if new_ingredient not in recipe_ingredients:
                     # Add ingredient if it's not already in the ingredient list
