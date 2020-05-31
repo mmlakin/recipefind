@@ -28,6 +28,12 @@ def index():
                     )
                 elif search_type == "recipe_name":
                     query = Recipe.query.filter(Recipe.name.ilike(f"%{search_term}%"))
+                elif search_type == "recipe_notes":
+                    query = Recipe.query.filter(Recipe.notes.ilike(f"%{search_term}%"))
+                elif search_type == "recipe_directions":
+                    query = Recipe.query.filter(
+                        Recipe.directions.ilike(f"%{search_term}%")
+                    )
                 elif search_type == "ingredient_category":
                     query = Recipe.query.join(Ingredient.recipes).filter(
                         Ingredient.category.ilike(f"%{search_term}%")

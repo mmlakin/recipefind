@@ -9,6 +9,8 @@ class RecipeSearchForm(Form):
         ("ingredient_category", "Ingredient Category"),
         ("recipe_name", "Recipe Name"),
         ("recipe_category", "Recipe Category"),
+        ("recipe_directions", "Recipe Directions"),
+        ("recipe_notes", "Recipe Notes"),
     ]
     search1 = StringField("")
     select1 = SelectField("", choices=options)
