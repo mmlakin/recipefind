@@ -1,0 +1,20 @@
+body {
+  padding-top: 56px;
+}
+
+.navbar-brand {
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+}
+
+.card-img-top {
+  object-fit: scale-down;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+textarea {
+  resize: none;
+}

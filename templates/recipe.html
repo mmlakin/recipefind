@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ recipe.name if recipe else 'Recipe'}} -
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-3 my-3">
+
+  </div>
+  <div class="col-lg-9">
+    {% if recipe %}
+    <div class="card mt-4">
+      <div class="embed-responsive embed-responsive-16by9">
+        <img class="card-img-top embed-responsive-item" src="{{ url_for('static', filename='images/cocktail-logo.png') }}" alt="">
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">
+          {{ recipe.name }}
+        </h3>
+        {% for ingredient in recipe.ingredients %}
+        <p class="card-text my-0">
+          <a href="{{ url_for('ingredient', ingredient_id=ingredient.id) }}">{{ ingredient.name }}</a>
+        </p>
+        {% endfor %}
+        <hr>
+        <p class="card-text">{{ recipe.directions }}</p>
+        <p class="card-text">{{ recipe.notes }}</p>
+        </div>
+        <div class="card-footer">
+          <small class="text-muted">
+            {{ recipe.category }}, page {{ recipe.page_num }}
+          </small>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <h1 class="offset-lg-3">Invalid recipe ID.</h1>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
