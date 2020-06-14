@@ -2,8 +2,8 @@
 import pdb
 from flask import render_template, request, flash, redirect, url_for
 from app import app, db
-from models import Recipe, Ingredient
-from forms import RecipeFilterForm, RecipeSearchForm, NewItemForm
+from models import Recipe, Ingredient, Rating
+from forms import RecipeFilterForm, RecipeSearchForm, NewItemForm, EditRecipeForm
 
 
 @app.route("/searchtest", methods=["GET", "POST"])
@@ -57,14 +57,42 @@ def home():
     return render_template("home.html", form=form, recipes=recipes)
 
 
-@app.route("/recipe/<int:recipe_id>", methods=["GET"])
+@app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe(recipe_id):
     try:
         recipe = Recipe.query.filter_by(id=recipe_id).one()
     except:
         recipe = None
     if recipe is not None:
-        return render_template("recipe.html", recipe=recipe)
+        editrecipeform = EditRecipeForm(request.form)
+        if request.method == "POST":
+            session = db.session()
+            if editrecipeform.delete.data is True:
+                session.delete(recipe.rating)
+            else:
+                if recipe.rating is not None:
+                    recipe.rating.score = editrecipeform.score.data
+                    recipe.rating.notes = editrecipeform.notes.data
+                else:
+                    recipe.rating = Rating(
+                        name=recipe.name,
+                        score=editrecipeform.score.data,
+                        notes=editrecipeform.notes.data,
+                    )
+                if recipe.rating.score == 0:
+                    recipe.rating = None
+                session.add(recipe)
+            session.commit()
+            flash(f"{recipe.name} rating updated.", "success")
+            return redirect(url_for("recipe", recipe_id=recipe.id))
+        if recipe.rating is not None:
+            editrecipeform.score.data, editrecipeform.notes.data = (
+                recipe.rating.score,
+                recipe.rating.notes,
+            )
+        return render_template(
+            "recipe.html", recipe=recipe, editrecipeform=editrecipeform
+        )
     return redirect(url_for("home"))
 
 
@@ -157,7 +185,6 @@ def index():
 
         results = sorted(results, key=lambda x: x.name)
 
-        pdb.set_trace()
         if results is not None:
             flash(f"{len(results)} recipes found!", "success")
             return render_template("index.html", form=searchform, recipes=results)

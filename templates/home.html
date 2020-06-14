@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from "_rating.html" import show_rating %}
 {% set active_page = 'home' %}
 {% block content %}
   <div class="row">
@@ -32,6 +33,7 @@
             <div class="card-body">
               <h4 class="card-title">
                 <a href="{{ url_for('recipe', recipe_id=recipe.id) }}">{{ recipe.name }}</a>
+                {{ show_rating(recipe.rating) }}
               </h4>
               {% for ingredient in recipe.ingredients %}
               <p class="card-text my-0">

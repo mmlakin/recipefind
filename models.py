@@ -9,6 +9,23 @@ ingredient_recipe = db.Table(
 )
 
 
+class Rating(db.Model):
+    __bind_key__ = "user"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    score = db.Column(db.Integer)
+    notes = db.Column(db.String)
+    recipe_id = db.Column(db.Integer, db.ForeignKey("recipe.id"))
+    recipe = db.relationship("Recipe", back_populates="rating")
+
+    def __repr__(self):
+        return (
+            f"Rating(name='{self.name}', "
+            + f"score='{self.score}', "
+            + f"notes='{self.notes}')"
+        )
+
+
 class Ingredient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
@@ -29,6 +46,7 @@ class Recipe(db.Model):
     ingredients = db.relationship(
         "Ingredient", secondary="ingredient_recipe", backref="recipes"
     )
+    rating = db.relationship("Rating", back_populates="recipe", uselist=False)
 
     def __repr__(self):
         return (

@@ -23,6 +23,36 @@ class RecipeFilterForm(FlaskForm):
     submit = SubmitField("Search Recipes")
 
 
+class EditRecipeForm(FlaskForm):
+    score = SelectField(
+        "Rating", choices=["0", "1", "2", "3", "4", "5"], default="3", coerce=int
+    )
+    notes = TextAreaField("Notes", validators=[Length(max=140)])
+    submit = SubmitField("Submit")
+    delete = BooleanField("Delete Rating?")
+
+
+class NewItemForm(FlaskForm):
+    title = StringField(
+        "Title",
+        validators=[
+            InputRequired("Input is required!"),
+            DataRequired("Valid title required"),
+            Length(min=5, max=20, message="Must be between 5 and 20 characters long"),
+        ],
+    )
+    description = TextAreaField(
+        "Description",
+        validators=[
+            InputRequired("Input is required!"),
+            DataRequired("Valid description required"),
+            Length(min=5, max=40, message="Must be between 5 and 20 characters long"),
+        ],
+    )
+    category = SelectMultipleField("Category")
+    submit = SubmitField("Submit")
+
+
 class RecipeSearchForm(Form):
     options = [
         ("ingredient_name", "Ingredient Name"),
@@ -63,24 +93,3 @@ class RecipeSearchForm(Form):
     search8 = StringField("")
     select8 = SelectField("", choices=options)
     exclude8 = BooleanField("Exclude")
-
-
-class NewItemForm(FlaskForm):
-    title = StringField(
-        "Title",
-        validators=[
-            InputRequired("Input is required!"),
-            DataRequired("Valid title required"),
-            Length(min=5, max=20, message="Must be between 5 and 20 characters long"),
-        ],
-    )
-    description = TextAreaField(
-        "Description",
-        validators=[
-            InputRequired("Input is required!"),
-            DataRequired("Valid description required"),
-            Length(min=5, max=40, message="Must be between 5 and 20 characters long"),
-        ],
-    )
-    category = SelectMultipleField("Category")
-    submit = SubmitField("Submit")
