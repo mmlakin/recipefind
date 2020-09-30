@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from "_rating.html" import show_rating %}
 
 {% block title %}
 {{ ingredient.name if ingredient else 'Ingredient'}} -
@@ -7,7 +8,18 @@
 {% block content %}
 <div class="row">
   <div class="col-lg-3 my-4">
-
+    <form method="POST" name="editingredient" action="{{ url_for('ingredient', ingredient_id=ingredient.id) }}">
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        {{ form.status.label }}
+        {{ form.status(class="form-control") }}
+        <br>
+        {{ form.delete }}
+        {{ form.delete.label }}
+        <hr>
+        {{ form.submit(class="btn btn-primary form-control") }}
+      </div>
+    </form>
   </div>
   <div class="col-lg-9">
     {% if ingredient %}
@@ -24,7 +36,10 @@
         <h5>Recipes:</h5>
         {% for recipe in ingredient.recipes|sort(attribute='name') %}
         <p class="card-text my-0">
-        <a href="{{ url_for('recipe', recipe_id=recipe.id) }}">{{ recipe.name }}</a>
+        <a href="{{ url_for('recipe', recipe_id=recipe.id) }}">
+          {{ recipe.name }}
+          {{ show_rating(recipe.rating) }}
+        </a>
         </p>
         {% endfor %}
         {% endif %}

@@ -2,8 +2,14 @@
 import pdb
 from flask import render_template, request, flash, redirect, url_for
 from app import app, db
-from models import Recipe, Ingredient, Rating
-from forms import RecipeFilterForm, RecipeSearchForm, NewItemForm, EditRecipeForm
+from models import Recipe, Ingredient, Rating, Stock
+from forms import (
+    RecipeFilterForm,
+    RecipeSearchForm,
+    NewItemForm,
+    EditRecipeForm,
+    EditIngredientForm,
+)
 
 
 @app.route("/searchtest", methods=["GET", "POST"])
@@ -67,7 +73,7 @@ def recipe(recipe_id):
         editrecipeform = EditRecipeForm(request.form)
         if request.method == "POST":
             session = db.session()
-            if editrecipeform.delete.data is True:
+            if editrecipeform.delete.data is True and recipe.rating is not None:
                 session.delete(recipe.rating)
             else:
                 if recipe.rating is not None:
@@ -96,14 +102,36 @@ def recipe(recipe_id):
     return redirect(url_for("home"))
 
 
-@app.route("/ingredient/<int:ingredient_id>", methods=["GET"])
+@app.route("/ingredient/<int:ingredient_id>", methods=["GET", "POST"])
 def ingredient(ingredient_id):
     try:
         ingredient = Ingredient.query.filter_by(id=ingredient_id).one()
     except:
         ingredient = None
     if ingredient is not None:
-        return render_template("ingredient.html", ingredient=ingredient)
+        editingredientform = EditIngredientForm(request.form)
+        if request.method == "POST":
+            session = db.session()
+            if editingredientform.delete.data is True and ingredient.stock is not None:
+                session.delete(ingredient.stock)
+            else:
+                if ingredient.stock is not None:
+                    ingredient.stock.status = editingredientform.status.data
+                else:
+                    ingredient.stock = Stock(
+                        name=ingredient.name, status=editingredientform.status.data
+                    )
+                if ingredient.stock.status == "":
+                    ingredient.stock = None
+                session.add(ingredient)
+            session.commit()
+            flash(f"{ingredient.name} stock updated.", "success")
+            return redirect(url_for("ingredient", ingredient_id=ingredient.id))
+        if ingredient.stock is not None:
+            editingredientform.status.data = ingredient.stock.status
+        return render_template(
+            "ingredient.html", ingredient=ingredient, form=editingredientform
+        )
     return redirect(url_for("home"))
 
 
@@ -193,4 +221,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="172.17.7.94")

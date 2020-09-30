@@ -26,10 +26,23 @@ class Rating(db.Model):
         )
 
 
+class Stock(db.Model):
+    __bind_key__ = "user"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    status = db.Column(db.String)
+    ingredient_id = db.Column(db.Integer, db.ForeignKey("ingredient.id"))
+    ingredient = db.relationship("Ingredient", back_populates="stock")
+
+    def __repr__(self):
+        return f"Stock(name='{self.name}', score='{self.statuss}'"
+
+
 class Ingredient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     category = db.Column(db.String)
+    stock = db.relationship("Stock", back_populates="ingredient", uselist=False)
 
     def __repr__(self):
         return f"Ingredient(name='{self.name}', category='{self.category}')"

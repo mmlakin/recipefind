@@ -1,7 +1,5 @@
 {% macro show_rating(rating) %}
-  {% if rating == None %}
-  <i class="fa fa-question"></i>
-  {% elif rating.score == 5 %}
+  {% if rating.score == 5 %}
   <i class="fa fa-star" style="color:green;"></i>
   {% elif rating.score == 4 %}
   <i class="fa fa-plus" style="color:green;"></i>

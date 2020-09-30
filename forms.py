@@ -27,9 +27,17 @@ class EditRecipeForm(FlaskForm):
     score = SelectField(
         "Rating", choices=["0", "1", "2", "3", "4", "5"], default="3", coerce=int
     )
-    notes = TextAreaField("Notes", validators=[Length(max=140)])
+    notes = TextAreaField("Notes", validators=[Length(max=280)])
     submit = SubmitField("Submit")
     delete = BooleanField("Delete Rating?")
+
+
+class EditIngredientForm(FlaskForm):
+    status = SelectField(
+        "Status", choices=["", "In Stock", "Out Of Stock", "Substitute"]
+    )
+    submit = SubmitField("Submit")
+    delete = BooleanField("Delete Stock?")
 
 
 class NewItemForm(FlaskForm):

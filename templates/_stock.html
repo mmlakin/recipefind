@@ -1,0 +1,11 @@
+{% macro stock_color(status) %}
+  {% if status == "Out Of Stock" %}
+    style="color:DarkRed"
+  {% elif status == "In Stock" %}
+    style="color:DodgerBlue"
+  {% elif status == "Substitute" %}
+    style="color:CornFlowerBlue; font-style:italic"
+  {% else %}
+    style="color:gray"
+  {% endif %}
+{% endmacro %}

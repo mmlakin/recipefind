@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% from "_rating.html" import show_rating %}
+{% from "_stock.html" import stock_color %}
 {% set active_page = 'home' %}
 {% block content %}
   <div class="row">
@@ -32,12 +33,12 @@
             </div>
             <div class="card-body">
               <h4 class="card-title">
-                <a href="{{ url_for('recipe', recipe_id=recipe.id) }}">{{ recipe.name }}</a>
                 {{ show_rating(recipe.rating) }}
+                <a href="{{ url_for('recipe', recipe_id=recipe.id) }}">{{ recipe.name }}</a>
               </h4>
               {% for ingredient in recipe.ingredients %}
               <p class="card-text my-0">
-              <a href="{{ url_for('ingredient', ingredient_id=ingredient.id) }}">{{ ingredient.name }}</a>
+              <a href="{{ url_for('ingredient', ingredient_id=ingredient.id) }}"{{ stock_color(ingredient.stock.status) }}>{{ ingredient.name }}</a>
               </p>
               {% endfor %}
               <hr>
